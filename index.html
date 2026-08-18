@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
+
+    <title>حالة المركبات والمعدات - ATP</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="page-header">
+
+    <img
+        src="company-logo.png"
+        class="company-logo"
+        alt="شعار الشركة"
+        onerror="this.style.display='none'"
+    >
+
+    <div class="company-name">
+        شركة الراشد للتقنية والطاقة
+    </div>
+
+    <h1>
+        حالة المركبات والمعدات
+    </h1>
+
+    <div
+        id="dateTime"
+        class="date-time"
+    >
+        جاري تحميل التاريخ والوقت...
+    </div>
+
+</header>
+
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<main class="page-content">
+
+
+    <section
+        class="fleet-table"
+        aria-label="حالة المركبات والمعدات"
+    >
+
+
+        <!-- =================================================
+             TABLE HEADER
+        ================================================== -->
+
+        <div class="fleet-head">
+
+            <div>SN</div>
+
+            <div>VN</div>
+
+            <div>VC</div>
+
+            <div>DN</div>
+
+            <div>DC</div>
+
+            <div>✉️</div>
+
+            <div>🕒</div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             VEHICLE CARDS
+        ================================================== -->
+
+        <div
+            id="vehicleGrid"
+            class="vehicle-grid"
+        >
+
+            <div class="loading">
+                جاري تحميل بيانات المركبات...
+            </div>
+
+        </div>
+
+
+    </section>
+
+
+</main>
+
+
+
+<!-- =========================================================
+     VEHICLE DETAILS MODAL
+========================================================= -->
+
+<div
+    id="detailsModal"
+    class="modal hidden"
+    aria-hidden="true"
+>
+
+    <div class="modal-card">
+
+
+        <button
+            class="close-btn"
+            type="button"
+            onclick="closeModal()"
+        >
+            ×
+        </button>
+
+
+        <div
+            id="modalTitle"
+            class="modal-title"
+        >
+            بيانات المركبة
+        </div>
+
+
+
+        <!-- =================================================
+             VEHICLE PREVIEW
+        ================================================== -->
+
+        <div
+            class="vehicle-preview"
+            id="vehiclePreview"
+        ></div>
+
+
+
+        <!-- =================================================
+             EDIT AREA
+        ================================================== -->
+
+        <div
+            id="editArea"
+            class="edit-area hidden"
+        >
+
+            <div class="section-title">
+                تحرير البيانات
+            </div>
+
+
+
+            <label>
+
+                رقم / اسم المركبة
+
+                <input
+                    id="editNumber"
+                    type="text"
+                >
+
+            </label>
+
+
+
+            <label>
+
+                السائق / المخول
+
+                <input
+                    id="editDriver"
+                    type="text"
+                >
+
+            </label>
+
+
+
+            <div class="two-fields">
+
+
+                <label>
+
+                    حالة المركبة
+
+                    <select id="editVehicleStatus">
+
+                        <option value="working">
+                            تعمل
+                        </option>
+
+                        <option value="stopped">
+                            لا تعمل
+                        </option>
+
+                    </select>
+
+                </label>
+
+
+
+                <label>
+
+                    حالة السائق
+
+                    <select id="editDriverStatus">
+
+                        <option value="present">
+                            حاضر
+                        </option>
+
+                        <option value="absent">
+                            غائب
+                        </option>
+
+                    </select>
+
+                </label>
+
+
+            </div>
+
+
+
+            <label>
+
+                حالة الصيانة
+
+                <select id="editMaintenance">
+
+                    <option value="none">
+                        لايوجد
+                    </option>
+
+                    <option value="routine">
+                        صيانة دورية
+                    </option>
+
+                    <option value="emergency">
+                        صيانة طارئة
+                    </option>
+
+                </select>
+
+            </label>
+
+
+
+            <label>
+
+                الملاحظات
+
+                <textarea
+                    id="editNotes"
+                    rows="3"
+                ></textarea>
+
+            </label>
+
+
+
+            <button
+                id="saveBtn"
+                class="save-btn"
+                type="button"
+            >
+                حفظ التعديل
+            </button>
+
+
+            <div
+                id="saveMessage"
+                class="save-message"
+            ></div>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             EDIT BUTTON
+        ================================================== -->
+
+        <button
+            id="editBtn"
+            class="edit-btn"
+            type="button"
+        >
+            تحرير البيانات
+        </button>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     PASSWORD MODAL
+========================================================= -->
+
+<div
+    id="passwordModal"
+    class="modal hidden"
+    aria-hidden="true"
+>
+
+    <div class="modal-card password-card">
+
+
+        <button
+            class="close-btn"
+            type="button"
+            onclick="closePasswordModal()"
+        >
+            ×
+        </button>
+
+
+        <div class="modal-title">
+            التحقق قبل التعديل
+        </div>
+
+
+        <p class="password-hint">
+            أدخل رقم المركبة ثم الرقم السري.
+        </p>
+
+
+
+        <label>
+
+            رقم المركبة
+
+            <input
+                id="vehiclePassword"
+                type="text"
+                inputmode="text"
+                autocomplete="off"
+            >
+
+        </label>
+
+
+
+        <label>
+
+            الرقم السري
+
+            <input
+                id="supervisorPassword"
+                type="password"
+                inputmode="numeric"
+                autocomplete="off"
+            >
+
+        </label>
+
+
+
+        <button
+            id="verifyBtn"
+            class="save-btn"
+            type="button"
+        >
+            تحقق
+        </button>
+
+
+        <div
+            id="passwordMessage"
+            class="save-message"
+        ></div>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
+
+<script src="script.js"></script>
+
+
+</body>
+
+</html>
