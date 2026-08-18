@@ -1,0 +1,887 @@
+/* =========================================================
+   ATP VEHICLE STATUS
+   STYLE.CSS
+========================================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+:root {
+
+    --bg: #f3f5f8;
+
+    --line: #d9dee6;
+
+    --text: #17202a;
+
+    --muted: #687381;
+
+    --green: #d9f2df;
+
+    --red: #f7d6d6;
+
+    --yellow: #fff0b8;
+
+    --gray: #d5d9de;
+
+    --white: #ffffff;
+
+    --accent: #173b67;
+
+}
+
+
+html,
+body {
+
+    width: 100%;
+
+    min-height: 100%;
+
+}
+
+
+body {
+
+    font-family:
+        Tahoma,
+        Arial,
+        sans-serif;
+
+    direction: rtl;
+
+    background: var(--bg);
+
+    color: var(--text);
+
+    min-height: 100vh;
+
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.page-header {
+
+    width: 100%;
+
+    text-align: center;
+
+    padding: 10px 8px 8px;
+
+    background: #ffffff;
+
+    border-bottom: 1px solid var(--line);
+
+}
+
+
+.company-logo {
+
+    width: 58px;
+
+    height: 58px;
+
+    object-fit: contain;
+
+    display: block;
+
+    margin: 0 auto 3px;
+
+}
+
+
+.company-name {
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    margin-bottom: 2px;
+
+}
+
+
+.page-header h1 {
+
+    font-size: 18px;
+
+    line-height: 1.25;
+
+}
+
+
+.date-time {
+
+    font-size: 11px;
+
+    color: var(--muted);
+
+    margin-top: 4px;
+
+}
+
+
+/* =========================================================
+   MAIN CONTENT
+========================================================= */
+
+.page-content {
+
+    width: min(100%, 1200px);
+
+    margin: 8px auto;
+
+    padding: 0 6px;
+
+}
+
+
+/* =========================================================
+   FLEET TABLE
+========================================================= */
+
+.fleet-table {
+
+    width: 100%;
+
+    overflow: hidden;
+
+    border: 1px solid var(--line);
+
+    border-radius: 8px;
+
+    background: #ffffff;
+
+}
+
+
+/* =========================================================
+   TABLE HEADER
+========================================================= */
+
+.fleet-head,
+.vehicle-card {
+
+    display: grid;
+
+    grid-template-columns:
+
+        minmax(30px, .55fr)
+
+        minmax(72px, 1.15fr)
+
+        minmax(65px, 1fr)
+
+        minmax(80px, 1.35fr)
+
+        minmax(50px, .9fr)
+
+        minmax(38px, .55fr)
+
+        minmax(48px, .75fr);
+
+    align-items: center;
+
+}
+
+
+.fleet-head {
+
+    min-height: 31px;
+
+    background: #e8edf3;
+
+    border-bottom: 1px solid #cfd6df;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    text-align: center;
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 3;
+
+}
+
+
+/* =========================================================
+   VEHICLE GRID
+========================================================= */
+
+.vehicle-grid {
+
+    display: flex;
+
+    flex-direction: column;
+
+    width: 100%;
+
+}
+
+
+/* =========================================================
+   VEHICLE CARD
+========================================================= */
+
+.vehicle-card {
+
+    min-height: 32px;
+
+    width: 100%;
+
+    border: 0;
+
+    border-bottom:
+        1px solid rgba(80, 90, 100, .18);
+
+    cursor: pointer;
+
+    transition:
+        filter .12s,
+        transform .12s;
+
+    font-family:
+        Tahoma,
+        Arial,
+        sans-serif;
+
+    font-size: 9px;
+
+    text-align: center;
+
+    color: #17202a;
+
+}
+
+
+.vehicle-card:last-child {
+
+    border-bottom: 0;
+
+}
+
+
+.vehicle-card:hover {
+
+    filter: brightness(.97);
+
+}
+
+
+.vehicle-card:active {
+
+    transform: scale(.995);
+
+}
+
+
+/* =========================================================
+   CARD CELLS
+========================================================= */
+
+.vehicle-card > div {
+
+    min-width: 0;
+
+    padding: 4px 3px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    border-left:
+        1px solid rgba(80, 90, 100, .12);
+
+}
+
+
+.vehicle-card > div:last-child {
+
+    border-left: 0;
+
+}
+
+
+/* =========================================================
+   STATUS COLORS
+========================================================= */
+
+/*
+   Green:
+   Vehicle = Working
+   Driver  = Present
+*/
+
+.status-working {
+
+    background: var(--green);
+
+}
+
+
+/*
+   Red:
+   Vehicle = Stopped
+   Driver  = Present
+*/
+
+.status-stopped {
+
+    background: var(--red);
+
+}
+
+
+/*
+   Yellow:
+   Vehicle = Working
+   Driver  = Absent
+*/
+
+.status-absent {
+
+    background: var(--yellow);
+
+}
+
+
+/*
+   Gray:
+   Last update > 24 hours
+*/
+
+.status-stale {
+
+    background: var(--gray) !important;
+
+}
+
+
+/* =========================================================
+   STATUS TEXT
+========================================================= */
+
+.status-text {
+
+    font-weight: 700;
+
+}
+
+
+/* =========================================================
+   NOTES ICON
+========================================================= */
+
+.note-icon {
+
+    font-size: 12px;
+
+}
+
+
+/* =========================================================
+   UPDATE TIME
+========================================================= */
+
+.time-text {
+
+    font-weight: 700;
+
+    direction: ltr;
+
+    unicode-bidi: embed;
+
+}
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.loading {
+
+    padding: 30px 10px;
+
+    text-align: center;
+
+    color: var(--muted);
+
+    font-size: 13px;
+
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.modal {
+
+    position: fixed;
+
+    inset: 0;
+
+    background:
+        rgba(0, 0, 0, .45);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 14px;
+
+    z-index: 20;
+
+}
+
+
+.hidden {
+
+    display: none !important;
+
+}
+
+
+/* =========================================================
+   MODAL CARD
+========================================================= */
+
+.modal-card {
+
+    position: relative;
+
+    width: min(100%, 430px);
+
+    max-height: 92vh;
+
+    overflow: auto;
+
+    background: #ffffff;
+
+    border-radius: 14px;
+
+    padding: 18px;
+
+    box-shadow:
+        0 15px 50px rgba(0, 0, 0, .22);
+
+}
+
+
+/* =========================================================
+   CLOSE BUTTON
+========================================================= */
+
+.close-btn {
+
+    position: absolute;
+
+    top: 7px;
+
+    left: 9px;
+
+    border: 0;
+
+    background: transparent;
+
+    font-size: 26px;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    color: #555555;
+
+}
+
+
+/* =========================================================
+   MODAL TITLE
+========================================================= */
+
+.modal-title {
+
+    text-align: center;
+
+    font-size: 17px;
+
+    font-weight: 800;
+
+    margin: 3px 0 12px;
+
+}
+
+
+/* =========================================================
+   VEHICLE PREVIEW
+========================================================= */
+
+.vehicle-preview {
+
+    border:
+        1px solid var(--line);
+
+    border-radius: 10px;
+
+    padding: 10px;
+
+    background: #f7f9fb;
+
+    font-size: 12px;
+
+    line-height: 1.8;
+
+}
+
+
+.preview-row {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1.5fr;
+
+    gap: 7px;
+
+    border-bottom:
+        1px solid #e4e7eb;
+
+    padding: 4px 0;
+
+}
+
+
+.preview-row:last-child {
+
+    border-bottom: 0;
+
+}
+
+
+.preview-label {
+
+    font-weight: 700;
+
+    color: var(--muted);
+
+}
+
+
+/* =========================================================
+   EDIT AREA
+========================================================= */
+
+.edit-area {
+
+    margin-top: 14px;
+
+    border-top:
+        1px solid var(--line);
+
+    padding-top: 12px;
+
+}
+
+
+.section-title {
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    margin-bottom: 9px;
+
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+label {
+
+    display: block;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    margin: 8px 0;
+
+}
+
+
+input,
+select,
+textarea {
+
+    width: 100%;
+
+    margin-top: 5px;
+
+    border:
+        1px solid #ccd3dc;
+
+    border-radius: 8px;
+
+    padding: 9px;
+
+    font-family:
+        Tahoma,
+        Arial,
+        sans-serif;
+
+    font-size: 12px;
+
+    background: #ffffff;
+
+    outline: none;
+
+}
+
+
+input:focus,
+select:focus,
+textarea:focus {
+
+    border-color: var(--accent);
+
+}
+
+
+textarea {
+
+    resize: vertical;
+
+}
+
+
+.two-fields {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 8px;
+
+}
+
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.edit-btn,
+.save-btn {
+
+    width: 100%;
+
+    border: 0;
+
+    border-radius: 9px;
+
+    padding: 11px;
+
+    margin-top: 12px;
+
+    cursor: pointer;
+
+    font-family:
+        Tahoma,
+        Arial,
+        sans-serif;
+
+    font-weight: 800;
+
+}
+
+
+.edit-btn {
+
+    background: var(--accent);
+
+    color: #ffffff;
+
+}
+
+
+.save-btn {
+
+    background: var(--accent);
+
+    color: #ffffff;
+
+}
+
+
+.edit-btn:hover,
+.save-btn:hover {
+
+    filter: brightness(.92);
+
+}
+
+
+.edit-btn:active,
+.save-btn:active {
+
+    transform: scale(.99);
+
+}
+
+
+/* =========================================================
+   MESSAGES
+========================================================= */
+
+.save-message {
+
+    min-height: 18px;
+
+    text-align: center;
+
+    font-size: 11px;
+
+    margin-top: 7px;
+
+    color: #b42318;
+
+}
+
+
+.password-hint {
+
+    text-align: center;
+
+    color: var(--muted);
+
+    font-size: 11px;
+
+    margin-bottom: 12px;
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .page-content {
+
+        padding: 0 3px;
+
+        margin-top: 5px;
+
+    }
+
+
+    .fleet-head,
+    .vehicle-card {
+
+        grid-template-columns:
+
+            7%
+
+            16%
+
+            15%
+
+            22%
+
+            16%
+
+            10%
+
+            14%;
+
+    }
+
+
+    .fleet-head {
+
+        font-size: 9px;
+
+        min-height: 29px;
+
+    }
+
+
+    .vehicle-card {
+
+        min-height: 31px;
+
+        font-size: 8px;
+
+    }
+
+
+    .vehicle-card > div {
+
+        padding: 4px 1px;
+
+    }
+
+
+    .company-name {
+
+        font-size: 12px;
+
+    }
+
+
+    .page-header h1 {
+
+        font-size: 16px;
+
+    }
+
+
+    .date-time {
+
+        font-size: 10px;
+
+    }
+
+}
+
+
+/* =========================================================
+   DESKTOP
+========================================================= */
+
+@media (min-width: 601px) {
+
+    .vehicle-card {
+
+        min-height: 34px;
+
+        font-size: 10px;
+
+    }
+
+
+    .fleet-head {
+
+        font-size: 11px;
+
+    }
+
+}
