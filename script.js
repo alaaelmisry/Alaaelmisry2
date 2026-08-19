@@ -19,7 +19,7 @@
    https://script.google.com/macros/s/XXXXXXXXXXXX/exec
 */
 
-const API_URL = "ضع_رابط_Web_App_هنا";
+const API_URL = "https://script.google.com/macros/s/AKfycby6VW6zVXt8D1dmqFvwzN1YGR9I2ZX--Bn_iyP04FBgGj2wR5kJUUMQmu_QpH4_3aNH/exec";
 
 
 /*
