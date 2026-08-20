@@ -1,47 +1,49 @@
 /* =========================================================
-   ATP VEHICLE STATUS
+   ATP FLEET MANAGEMENT
    STYLE.CSS
+   تصميم واضح - ألوان قوية - خطوط سميكة
 ========================================================= */
 
 * {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
 
 :root {
 
-    --bg: #f3f5f8;
+    --navy: #0f2742;
+    --navy-dark: #081b2e;
+    --blue: #1769aa;
+    --blue-light: #eaf4ff;
 
-    --line: #d9dee6;
+    --green: #16803c;
+    --green-light: #e8f7ee;
 
-    --text: #17202a;
+    --yellow: #d99a00;
+    --yellow-light: #fff7d6;
 
-    --muted: #687381;
+    --red: #c62828;
+    --red-light: #ffebeb;
 
-    --green: #d9f2df;
-
-    --red: #f7d6d6;
-
-    --yellow: #fff0b8;
-
-    --gray: #d5d9de;
+    --gray: #68717b;
+    --gray-light: #eef1f4;
 
     --white: #ffffff;
+    --black: #111111;
 
-    --accent: #173b67;
+    --border: #c7d0d9;
 
+    --shadow:
+        0 4px 14px rgba(0, 0, 0, 0.12);
+
+    --radius: 10px;
 }
 
 
-html,
-body {
-
-    width: 100%;
-
-    min-height: 100%;
-
+html {
+    scroll-behavior: smooth;
 }
 
 
@@ -54,12 +56,17 @@ body {
 
     direction: rtl;
 
-    background: var(--bg);
+    background:
+        #f3f6f9;
 
-    color: var(--text);
+    color:
+        var(--black);
 
-    min-height: 100vh;
+    min-height:
+        100vh;
 
+    font-weight:
+        600;
 }
 
 
@@ -71,75 +78,142 @@ body {
 
     width: 100%;
 
-    text-align: center;
+    min-height: 105px;
 
-    padding: 10px 8px 8px;
+    padding: 12px 20px;
 
-    background: #ffffff;
+    background:
+        linear-gradient(
+            135deg,
+            var(--navy-dark),
+            var(--navy)
+        );
 
-    border-bottom: 1px solid var(--line);
+    color: var(--white);
 
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    border-bottom:
+        5px solid var(--blue);
+
+    box-shadow:
+        0 3px 12px rgba(0,0,0,.20);
+}
+
+
+.header-brand {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    min-width: 0;
 }
 
 
 .company-logo {
 
-    width: 58px;
+    width: 68px;
 
-    height: 58px;
+    height: 68px;
 
     object-fit: contain;
 
-    display: block;
+    background:
+        var(--white);
 
-    margin: 0 auto 3px;
+    border-radius:
+        10px;
 
+    padding: 5px;
+
+    border:
+        2px solid rgba(255,255,255,.75);
 }
 
 
 .company-name {
 
-    font-size: 14px;
+    font-size:
+        clamp(17px, 2vw, 25px);
 
-    font-weight: 700;
+    font-weight:
+        900;
 
-    margin-bottom: 2px;
-
+    white-space:
+        nowrap;
 }
 
 
-.page-header h1 {
+.header-brand h1 {
 
-    font-size: 18px;
+    font-size:
+        clamp(15px, 1.7vw, 22px);
 
-    line-height: 1.25;
+    font-weight:
+        900;
 
+    color:
+        #dcecff;
+
+    white-space:
+        nowrap;
 }
 
 
 .date-time {
 
-    font-size: 11px;
+    text-align:
+        center;
 
-    color: var(--muted);
+    min-width:
+        210px;
 
-    margin-top: 4px;
+    padding:
+        10px 14px;
 
+    border:
+        1px solid rgba(255,255,255,.30);
+
+    border-radius:
+        var(--radius);
+
+    background:
+        rgba(255,255,255,.10);
+
+    font-size:
+        15px;
+
+    line-height:
+        1.7;
+
+    font-weight:
+        800;
 }
 
 
 /* =========================================================
-   MAIN CONTENT
+   PAGE CONTENT
 ========================================================= */
 
 .page-content {
 
-    width: min(100%, 1200px);
+    width:
+        min(1500px, 100%);
 
-    margin: 8px auto;
+    margin:
+        auto;
 
-    padding: 0 6px;
-
+    padding:
+        18px;
 }
 
 
@@ -151,14 +225,20 @@ body {
 
     width: 100%;
 
-    overflow: hidden;
+    background:
+        var(--white);
 
-    border: 1px solid var(--line);
+    border:
+        2px solid var(--border);
 
-    border-radius: 8px;
+    border-radius:
+        12px;
 
-    background: #ffffff;
+    overflow:
+        hidden;
 
+    box-shadow:
+        var(--shadow);
 }
 
 
@@ -166,52 +246,59 @@ body {
    TABLE HEADER
 ========================================================= */
 
-.fleet-head,
-.vehicle-card {
+.fleet-head {
 
-    display: grid;
+    display:
+        grid;
 
     grid-template-columns:
+        55px
+        minmax(120px, 1.2fr)
+        minmax(120px, 1fr)
+        minmax(140px, 1.2fr)
+        minmax(100px, .9fr)
+        minmax(100px, 1fr)
+        minmax(105px, .9fr);
 
-        minmax(30px, .55fr)
+    background:
+        var(--navy);
 
-        minmax(72px, 1.15fr)
+    color:
+        var(--white);
 
-        minmax(65px, 1fr)
+    font-size:
+        15px;
 
-        minmax(80px, 1.35fr)
+    font-weight:
+        900;
 
-        minmax(50px, .9fr)
-
-        minmax(38px, .55fr)
-
-        minmax(48px, .75fr);
-
-    align-items: center;
-
+    border-bottom:
+        3px solid var(--blue);
 }
 
 
-.fleet-head {
+.fleet-head > div {
 
-    min-height: 31px;
+    min-height:
+        52px;
 
-    background: #e8edf3;
+    display:
+        flex;
 
-    border-bottom: 1px solid #cfd6df;
+    align-items:
+        center;
 
-    font-size: 10px;
+    justify-content:
+        center;
 
-    font-weight: 800;
+    text-align:
+        center;
 
-    text-align: center;
+    padding:
+        7px;
 
-    position: sticky;
-
-    top: 0;
-
-    z-index: 3;
-
+    border-left:
+        1px solid rgba(255,255,255,.18);
 }
 
 
@@ -221,97 +308,83 @@ body {
 
 .vehicle-grid {
 
-    display: flex;
-
-    flex-direction: column;
-
-    width: 100%;
-
+    width:
+        100%;
 }
 
 
-/* =========================================================
-   VEHICLE CARD
-========================================================= */
+.vehicle-row {
 
-.vehicle-card {
+    display:
+        grid;
 
-    min-height: 32px;
+    grid-template-columns:
+        55px
+        minmax(120px, 1.2fr)
+        minmax(120px, 1fr)
+        minmax(140px, 1.2fr)
+        minmax(100px, .9fr)
+        minmax(100px, 1fr)
+        minmax(105px, .9fr);
 
-    width: 100%;
-
-    border: 0;
+    min-height:
+        67px;
 
     border-bottom:
-        1px solid rgba(80, 90, 100, .18);
+        1px solid var(--border);
 
-    cursor: pointer;
+    cursor:
+        pointer;
 
     transition:
-        filter .12s,
-        transform .12s;
-
-    font-family:
-        Tahoma,
-        Arial,
-        sans-serif;
-
-    font-size: 9px;
-
-    text-align: center;
-
-    color: #17202a;
-
+        .18s ease;
 }
 
 
-.vehicle-card:last-child {
+.vehicle-row:hover {
 
-    border-bottom: 0;
+    transform:
+        scale(1.002);
 
+    box-shadow:
+        inset 0 0 0 2px var(--blue);
+
+    position:
+        relative;
+
+    z-index:
+        2;
 }
 
 
-.vehicle-card:hover {
+.vehicle-row > div {
 
-    filter: brightness(.97);
+    display:
+        flex;
 
-}
+    align-items:
+        center;
 
+    justify-content:
+        center;
 
-.vehicle-card:active {
+    text-align:
+        center;
 
-    transform: scale(.995);
-
-}
-
-
-/* =========================================================
-   CARD CELLS
-========================================================= */
-
-.vehicle-card > div {
-
-    min-width: 0;
-
-    padding: 4px 3px;
-
-    white-space: nowrap;
-
-    overflow: hidden;
-
-    text-overflow: ellipsis;
+    padding:
+        7px 5px;
 
     border-left:
-        1px solid rgba(80, 90, 100, .12);
+        1px solid var(--border);
 
-}
+    font-size:
+        14px;
 
+    font-weight:
+        800;
 
-.vehicle-card > div:last-child {
-
-    border-left: 0;
-
+    overflow-wrap:
+        anywhere;
 }
 
 
@@ -319,91 +392,167 @@ body {
    STATUS COLORS
 ========================================================= */
 
-/*
-   Green:
-   Vehicle = Working
-   Driver  = Present
-*/
-
 .status-working {
 
-    background: var(--green);
+    background:
+        var(--green-light);
 
+    color:
+        var(--green);
+
+    font-weight:
+        900;
 }
 
-
-/*
-   Red:
-   Vehicle = Stopped
-   Driver  = Present
-*/
 
 .status-stopped {
 
-    background: var(--red);
+    background:
+        var(--red-light);
 
+    color:
+        var(--red);
+
+    font-weight:
+        900;
 }
 
 
-/*
-   Yellow:
-   Vehicle = Working
-   Driver  = Absent
-*/
+.driver-present {
 
-.status-absent {
+    color:
+        var(--green);
 
-    background: var(--yellow);
-
+    font-weight:
+        900;
 }
 
 
-/*
-   Gray:
-   Last update > 24 hours
-*/
+.driver-absent {
 
-.status-stale {
+    color:
+        var(--red);
 
-    background: var(--gray) !important;
+    font-weight:
+        900;
+}
 
+
+.maintenance-none {
+
+    background:
+        var(--green-light);
+
+    color:
+        var(--green);
+
+    font-weight:
+        900;
+}
+
+
+.maintenance-routine {
+
+    background:
+        var(--yellow-light);
+
+    color:
+        #8a6200;
+
+    font-weight:
+        900;
+}
+
+
+.maintenance-emergency {
+
+    background:
+        var(--red-light);
+
+    color:
+        var(--red);
+
+    font-weight:
+        900;
 }
 
 
 /* =========================================================
-   STATUS TEXT
+   OLD UPDATE
+   أكثر من 24 ساعة
 ========================================================= */
 
-.status-text {
+.vehicle-old {
 
-    font-weight: 700;
+    background:
+        #dfe3e7 !important;
 
+    color:
+        #4d555d !important;
+}
+
+
+.vehicle-old > div {
+
+    background:
+        #dfe3e7 !important;
+
+    color:
+        #4d555d !important;
 }
 
 
 /* =========================================================
-   NOTES ICON
+   NOTES
 ========================================================= */
 
-.note-icon {
+.notes-cell {
 
-    font-size: 12px;
+    white-space:
+        nowrap;
 
+    overflow:
+        hidden;
+
+    text-overflow:
+        ellipsis;
+
+    max-width:
+        180px;
 }
 
 
-/* =========================================================
-   UPDATE TIME
-========================================================= */
+.notes-icon {
 
-.time-text {
+    display:
+        inline-flex;
 
-    font-weight: 700;
+    align-items:
+        center;
 
-    direction: ltr;
+    justify-content:
+        center;
 
-    unicode-bidi: embed;
+    width:
+        28px;
 
+    height:
+        28px;
+
+    border-radius:
+        50%;
+
+    background:
+        var(--blue-light);
+
+    color:
+        var(--blue);
+
+    font-size:
+        15px;
+
+    font-weight:
+        900;
 }
 
 
@@ -413,14 +562,26 @@ body {
 
 .loading {
 
-    padding: 30px 10px;
+    min-height:
+        150px;
 
-    text-align: center;
+    display:
+        flex;
 
-    color: var(--muted);
+    align-items:
+        center;
 
-    font-size: 13px;
+    justify-content:
+        center;
 
+    color:
+        var(--navy);
+
+    font-size:
+        17px;
+
+    font-weight:
+        900;
 }
 
 
@@ -430,30 +591,42 @@ body {
 
 .modal {
 
-    position: fixed;
+    position:
+        fixed;
 
-    inset: 0;
+    inset:
+        0;
+
+    z-index:
+        10000;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    padding:
+        15px;
 
     background:
-        rgba(0, 0, 0, .45);
+        rgba(0,0,0,.62);
 
-    display: flex;
+    backdrop-filter:
+        blur(3px);
 
-    align-items: center;
-
-    justify-content: center;
-
-    padding: 14px;
-
-    z-index: 20;
-
+    overflow:
+        auto;
 }
 
 
 .hidden {
 
-    display: none !important;
-
+    display:
+        none !important;
 }
 
 
@@ -463,67 +636,136 @@ body {
 
 .modal-card {
 
-    position: relative;
+    width:
+        min(650px, 100%);
 
-    width: min(100%, 430px);
+    max-height:
+        92vh;
 
-    max-height: 92vh;
+    overflow-y:
+        auto;
 
-    overflow: auto;
+    background:
+        var(--white);
 
-    background: #ffffff;
+    border-radius:
+        15px;
 
-    border-radius: 14px;
-
-    padding: 18px;
+    border:
+        2px solid var(--border);
 
     box-shadow:
-        0 15px 50px rgba(0, 0, 0, .22);
+        0 15px 50px rgba(0,0,0,.30);
 
+    padding:
+        20px;
+
+    animation:
+        modalOpen .18s ease;
+}
+
+
+@keyframes modalOpen {
+
+    from {
+
+        opacity:
+            0;
+
+        transform:
+            translateY(12px)
+            scale(.98);
+    }
+
+    to {
+
+        opacity:
+            1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
 }
 
 
 /* =========================================================
-   CLOSE BUTTON
+   MODAL HEADER
 ========================================================= */
 
-.close-btn {
+.modal-header {
 
-    position: absolute;
+    display:
+        flex;
 
-    top: 7px;
+    align-items:
+        center;
 
-    left: 9px;
+    justify-content:
+        space-between;
 
-    border: 0;
+    gap:
+        10px;
 
-    background: transparent;
+    margin-bottom:
+        18px;
 
-    font-size: 26px;
+    padding-bottom:
+        12px;
 
-    line-height: 1;
-
-    cursor: pointer;
-
-    color: #555555;
-
+    border-bottom:
+        3px solid var(--blue);
 }
 
 
-/* =========================================================
-   MODAL TITLE
-========================================================= */
+.modal-header h2 {
 
-.modal-title {
+    color:
+        var(--navy);
 
-    text-align: center;
+    font-size:
+        21px;
 
-    font-size: 17px;
+    font-weight:
+        900;
+}
 
-    font-weight: 800;
 
-    margin: 3px 0 12px;
+.modal-close {
 
+    width:
+        38px;
+
+    height:
+        38px;
+
+    border:
+        0;
+
+    border-radius:
+        8px;
+
+    background:
+        var(--red);
+
+    color:
+        var(--white);
+
+    font-size:
+        26px;
+
+    font-weight:
+        900;
+
+    cursor:
+        pointer;
+}
+
+
+.modal-close:hover {
+
+    background:
+        #a91f1f;
 }
 
 
@@ -533,52 +775,70 @@ body {
 
 .vehicle-preview {
 
-    border:
-        1px solid var(--line);
+    display:
+        grid;
 
-    border-radius: 10px;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
 
-    padding: 10px;
+    gap:
+        10px;
 
-    background: #f7f9fb;
-
-    font-size: 12px;
-
-    line-height: 1.8;
-
+    margin-bottom:
+        15px;
 }
 
 
 .preview-row {
 
-    display: grid;
+    min-height:
+        68px;
 
-    grid-template-columns:
-        1fr 1.5fr;
+    padding:
+        10px 12px;
 
-    gap: 7px;
+    background:
+        #f7f9fb;
 
-    border-bottom:
-        1px solid #e4e7eb;
+    border:
+        2px solid var(--border);
 
-    padding: 4px 0;
+    border-radius:
+        9px;
 
-}
+    display:
+        flex;
 
+    flex-direction:
+        column;
 
-.preview-row:last-child {
+    align-items:
+        flex-start;
 
-    border-bottom: 0;
+    justify-content:
+        center;
 
+    gap:
+        5px;
+
+    font-size:
+        15px;
+
+    font-weight:
+        800;
 }
 
 
 .preview-label {
 
-    font-weight: 700;
+    color:
+        var(--blue);
 
-    color: var(--muted);
+    font-size:
+        12px;
 
+    font-weight:
+        900;
 }
 
 
@@ -588,98 +848,146 @@ body {
 
 .edit-area {
 
-    margin-top: 14px;
+    margin-top:
+        12px;
 
-    border-top:
-        1px solid var(--line);
-
-    padding-top: 12px;
-
-}
-
-
-.section-title {
-
-    font-size: 14px;
-
-    font-weight: 800;
-
-    margin-bottom: 9px;
-
-}
-
-
-/* =========================================================
-   FORM
-========================================================= */
-
-label {
-
-    display: block;
-
-    font-size: 11px;
-
-    font-weight: 700;
-
-    margin: 8px 0;
-
-}
-
-
-input,
-select,
-textarea {
-
-    width: 100%;
-
-    margin-top: 5px;
+    padding:
+        15px;
 
     border:
-        1px solid #ccd3dc;
+        2px solid var(--blue);
 
-    border-radius: 8px;
+    border-radius:
+        12px;
 
-    padding: 9px;
+    background:
+        #f5f9fd;
+}
+
+
+.edit-title {
+
+    color:
+        var(--navy);
+
+    font-size:
+        18px;
+
+    font-weight:
+        900;
+
+    margin-bottom:
+        14px;
+}
+
+
+.edit-field {
+
+    margin-bottom:
+        13px;
+}
+
+
+.edit-field label,
+.password-field label {
+
+    display:
+        block;
+
+    margin-bottom:
+        6px;
+
+    color:
+        var(--navy);
+
+    font-size:
+        14px;
+
+    font-weight:
+        900;
+}
+
+
+.edit-field input,
+.edit-field select,
+.edit-field textarea,
+.password-field input {
+
+    width:
+        100%;
+
+    min-height:
+        45px;
+
+    border:
+        2px solid var(--border);
+
+    border-radius:
+        8px;
+
+    padding:
+        9px 11px;
+
+    background:
+        var(--white);
+
+    color:
+        var(--black);
 
     font-family:
-        Tahoma,
-        Arial,
-        sans-serif;
+        inherit;
 
-    font-size: 12px;
+    font-size:
+        15px;
 
-    background: #ffffff;
+    font-weight:
+        700;
 
-    outline: none;
-
+    outline:
+        none;
 }
 
 
-input:focus,
-select:focus,
-textarea:focus {
+.edit-field textarea {
 
-    border-color: var(--accent);
+    resize:
+        vertical;
 
+    min-height:
+        90px;
 }
 
 
-textarea {
+.edit-field input:focus,
+.edit-field select:focus,
+.edit-field textarea:focus,
+.password-field input:focus {
 
-    resize: vertical;
+    border-color:
+        var(--blue);
 
+    box-shadow:
+        0 0 0 3px rgba(23,105,170,.12);
 }
 
 
-.two-fields {
+.edit-field input[readonly] {
 
-    display: grid;
+    background:
+        #e9edf1;
 
-    grid-template-columns:
-        1fr 1fr;
+    color:
+        #5d6670;
 
-    gap: 8px;
+    cursor:
+        not-allowed;
+}
 
+
+.full-field {
+
+    width:
+        100%;
 }
 
 
@@ -687,201 +995,740 @@ textarea {
    BUTTONS
 ========================================================= */
 
-.edit-btn,
-.save-btn {
+.modal-actions {
 
-    width: 100%;
+    display:
+        flex;
 
-    border: 0;
+    gap:
+        10px;
 
-    border-radius: 9px;
+    margin-top:
+        16px;
+}
 
-    padding: 11px;
 
-    margin-top: 12px;
+.modal-actions button {
 
-    cursor: pointer;
+    flex:
+        1;
+
+    min-height:
+        46px;
+
+    border:
+        0;
+
+    border-radius:
+        8px;
 
     font-family:
-        Tahoma,
-        Arial,
-        sans-serif;
+        inherit;
 
-    font-weight: 800;
+    font-size:
+        14px;
 
+    font-weight:
+        900;
+
+    cursor:
+        pointer;
+
+    transition:
+        .15s ease;
 }
 
 
-.edit-btn {
+.primary-button {
 
-    background: var(--accent);
+    background:
+        var(--blue);
 
-    color: #ffffff;
-
+    color:
+        var(--white);
 }
 
 
-.save-btn {
+.primary-button:hover {
 
-    background: var(--accent);
-
-    color: #ffffff;
-
+    background:
+        #0e578f;
 }
 
 
-.edit-btn:hover,
-.save-btn:hover {
+.secondary-button {
 
-    filter: brightness(.92);
+    background:
+        #e3e7eb;
 
+    color:
+        var(--navy);
+
+    border:
+        1px solid var(--border) !important;
 }
 
 
-.edit-btn:active,
-.save-btn:active {
+.secondary-button:hover {
 
-    transform: scale(.99);
-
+    background:
+        #d3d9df;
 }
 
 
-/* =========================================================
-   MESSAGES
-========================================================= */
+.save-button {
+
+    width:
+        100%;
+
+    min-height:
+        47px;
+
+    border:
+        0;
+
+    border-radius:
+        8px;
+
+    background:
+        var(--green);
+
+    color:
+        var(--white);
+
+    font-family:
+        inherit;
+
+    font-size:
+        15px;
+
+    font-weight:
+        900;
+
+    cursor:
+        pointer;
+}
+
+
+.save-button:hover {
+
+    background:
+        #10642f;
+}
+
 
 .save-message {
 
-    min-height: 18px;
+    min-height:
+        24px;
 
-    text-align: center;
+    margin:
+        7px 0;
 
-    font-size: 11px;
+    text-align:
+        center;
 
-    margin-top: 7px;
+    font-size:
+        14px;
 
-    color: #b42318;
+    font-weight:
+        900;
 
-}
-
-
-.password-hint {
-
-    text-align: center;
-
-    color: var(--muted);
-
-    font-size: 11px;
-
-    margin-bottom: 12px;
-
+    color:
+        var(--green);
 }
 
 
 /* =========================================================
-   MOBILE
+   PASSWORD
 ========================================================= */
 
-@media (max-width: 600px) {
+.password-card {
 
-    .page-content {
+    max-width:
+        450px;
+}
 
-        padding: 0 3px;
 
-        margin-top: 5px;
+.password-info {
 
+    padding:
+        12px;
+
+    margin-bottom:
+        15px;
+
+    background:
+        var(--blue-light);
+
+    border-right:
+        5px solid var(--blue);
+
+    border-radius:
+        7px;
+
+    line-height:
+        1.8;
+
+    color:
+        var(--navy);
+}
+
+
+.password-info strong {
+
+    display:
+        block;
+
+    margin-bottom:
+        3px;
+
+    font-weight:
+        900;
+}
+
+
+.password-info p {
+
+    font-size:
+        13px;
+
+    font-weight:
+        600;
+}
+
+
+.password-field {
+
+    margin-bottom:
+        13px;
+}
+
+
+.password-message {
+
+    min-height:
+        25px;
+
+    text-align:
+        center;
+
+    color:
+        var(--red);
+
+    font-size:
+        14px;
+
+    font-weight:
+        900;
+}
+
+
+/* =========================================================
+   CONFIRM MODAL
+========================================================= */
+
+.confirm-card {
+
+    max-width:
+        430px;
+
+    text-align:
+        center;
+}
+
+
+.confirm-icon {
+
+    width:
+        58px;
+
+    height:
+        58px;
+
+    margin:
+        0 auto 12px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    border-radius:
+        50%;
+
+    background:
+        var(--yellow-light);
+
+    color:
+        var(--yellow);
+
+    border:
+        3px solid var(--yellow);
+
+    font-size:
+        30px;
+
+    font-weight:
+        900;
+}
+
+
+.confirm-card h2 {
+
+    color:
+        var(--navy);
+
+    font-size:
+        20px;
+
+    font-weight:
+        900;
+
+    margin-bottom:
+        10px;
+}
+
+
+.confirm-card p {
+
+    color:
+        #333;
+
+    line-height:
+        1.8;
+
+    font-size:
+        15px;
+
+    font-weight:
+        700;
+}
+
+
+/* =========================================================
+   ADMIN
+========================================================= */
+
+.admin-card {
+
+    max-width:
+        450px;
+}
+
+
+.admin-description {
+
+    color:
+        #555;
+
+    font-size:
+        14px;
+
+    line-height:
+        1.7;
+
+    margin-bottom:
+        15px;
+}
+
+
+.admin-actions {
+
+    display:
+        grid;
+
+    gap:
+        10px;
+}
+
+
+.admin-actions button {
+
+    min-height:
+        48px;
+
+    border:
+        0;
+
+    border-radius:
+        8px;
+
+    font-family:
+        inherit;
+
+    font-size:
+        15px;
+
+    font-weight:
+        900;
+
+    cursor:
+        pointer;
+}
+
+
+.admin-add-button {
+
+    background:
+        var(--green);
+
+    color:
+        var(--white);
+}
+
+
+.admin-delete-button {
+
+    background:
+        var(--red);
+
+    color:
+        var(--white);
+}
+
+
+/* =========================================================
+   ADD VEHICLE
+========================================================= */
+
+.add-vehicle-card {
+
+    max-width:
+        480px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .page-header {
+
+        flex-direction:
+            column;
+
+        align-items:
+            stretch;
+
+        text-align:
+            center;
+
+        padding:
+            12px;
     }
 
 
-    .fleet-head,
-    .vehicle-card {
+    .header-brand {
 
-        grid-template-columns:
+        justify-content:
+            center;
 
-            7%
-
-            16%
-
-            15%
-
-            22%
-
-            16%
-
-            10%
-
-            14%;
-
+        flex-wrap:
+            wrap;
     }
 
 
-    .fleet-head {
+    .company-name,
+    .header-brand h1 {
 
-        font-size: 9px;
-
-        min-height: 29px;
-
-    }
-
-
-    .vehicle-card {
-
-        min-height: 31px;
-
-        font-size: 8px;
-
-    }
-
-
-    .vehicle-card > div {
-
-        padding: 4px 1px;
-
-    }
-
-
-    .company-name {
-
-        font-size: 12px;
-
-    }
-
-
-    .page-header h1 {
-
-        font-size: 16px;
-
+        white-space:
+            normal;
     }
 
 
     .date-time {
 
-        font-size: 10px;
-
+        width:
+            100%;
     }
 
+
+    .fleet-head,
+    .vehicle-row {
+
+        grid-template-columns:
+            40px
+            minmax(95px, 1fr)
+            minmax(95px, 1fr)
+            minmax(110px, 1fr)
+            minmax(85px, .9fr)
+            minmax(85px, .9fr)
+            minmax(90px, .9fr);
+    }
+
+
+    .fleet-head > div,
+    .vehicle-row > div {
+
+        font-size:
+            12px;
+
+        padding:
+            5px 3px;
+    }
+
+
+    .vehicle-row {
+
+        min-height:
+            62px;
+    }
+}
+
+
+@media (max-width: 650px) {
+
+    .page-content {
+
+        padding:
+            8px;
+    }
+
+
+    .page-header {
+
+        min-height:
+            auto;
+    }
+
+
+    .company-logo {
+
+        width:
+            54px;
+
+        height:
+            54px;
+    }
+
+
+    .company-name {
+
+        font-size:
+            16px;
+    }
+
+
+    .header-brand h1 {
+
+        width:
+            100%;
+
+        font-size:
+            15px;
+    }
+
+
+    .date-time {
+
+        font-size:
+            13px;
+    }
+
+
+    /*
+       الحفاظ على ظهور جميع الأعمدة
+       مع تقليل المسافات والخطوط
+    */
+
+    .fleet-head,
+    .vehicle-row {
+
+        grid-template-columns:
+            30px
+            minmax(72px, 1fr)
+            minmax(72px, 1fr)
+            minmax(80px, 1fr)
+            minmax(65px, .9fr)
+            minmax(65px, .9fr)
+            minmax(70px, .9fr);
+    }
+
+
+    .fleet-head > div,
+    .vehicle-row > div {
+
+        font-size:
+            10px;
+
+        padding:
+            4px 2px;
+
+        min-width:
+            0;
+    }
+
+
+    .vehicle-row {
+
+        min-height:
+            56px;
+    }
+
+
+    .vehicle-preview {
+
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .modal {
+
+        align-items:
+            flex-start;
+
+        padding:
+            8px;
+    }
+
+
+    .modal-card {
+
+        margin-top:
+            5vh;
+
+        padding:
+            14px;
+
+        max-height:
+            90vh;
+    }
+
+
+    .modal-actions {
+
+        flex-direction:
+            column;
+    }
+
+
+    .modal-actions button {
+
+        width:
+            100%;
+    }
+
+
+    .preview-row {
+
+        min-height:
+            58px;
+
+        font-size:
+            13px;
+    }
 }
 
 
 /* =========================================================
-   DESKTOP
+   VERY SMALL SCREENS
 ========================================================= */
 
-@media (min-width: 601px) {
+@media (max-width: 420px) {
 
-    .vehicle-card {
+    .fleet-head,
+    .vehicle-row {
 
-        min-height: 34px;
-
-        font-size: 10px;
-
+        grid-template-columns:
+            25px
+            minmax(60px, 1fr)
+            minmax(60px, 1fr)
+            minmax(68px, 1fr)
+            minmax(55px, .8fr)
+            minmax(55px, .8fr)
+            minmax(60px, .8fr);
     }
 
 
-    .fleet-head {
+    .fleet-head > div,
+    .vehicle-row > div {
 
-        font-size: 11px;
+        font-size:
+            9px;
+    }
 
+
+    .page-content {
+
+        padding:
+            4px;
+    }
+
+
+    .modal-card {
+
+        padding:
+            11px;
+    }
+}
+
+
+/* =========================================================
+   ACCESSIBILITY
+========================================================= */
+
+button,
+select,
+input,
+textarea {
+
+    -webkit-tap-highlight-color:
+        transparent;
+}
+
+
+button:focus-visible,
+select:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+
+    outline:
+        3px solid rgba(23,105,170,.35);
+
+    outline-offset:
+        2px;
+}
+
+
+/* =========================================================
+   PRINT
+========================================================= */
+
+@media print {
+
+    .modal,
+    .modal-card {
+
+        display:
+            none !important;
+    }
+
+
+    .page-header {
+
+        color:
+            #000;
+
+        background:
+            #fff;
+
+        border:
+            1px solid #000;
+    }
+
+
+    .fleet-table {
+
+        box-shadow:
+            none;
     }
 
 }
