@@ -283,40 +283,36 @@ async function loadVehicles() {
         }
 
 
-        const data =
-            await response.json();
+       const data = await response.json();
 
+console.log("Google Apps Script Response:", data);
 
-        if (
-            data &&
-            data.ok === false
-        ) {
+if (data.ok === false) {
 
-            throw new Error(
-                data.message ||
-                "تعذر تحميل البيانات"
-            );
+    throw new Error(
+        data.message ||
+        "Google Apps Script returned an error."
+    );
+}
 
-        }
+const receivedVehicles =
+    Array.isArray(data)
+        ? data
+        : Array.isArray(data.vehicles)
+            ? data.vehicles
+            : [];
 
+console.log(
+    "Vehicles received:",
+    receivedVehicles
+);
 
-        const rawVehicles =
-            Array.isArray(data)
-                ? data
-                : (
-                    Array.isArray(data.vehicles)
-                        ? data.vehicles
-                        : []
-                );
+vehicles =
+    normalizeVehicles(
+        receivedVehicles
+    );
 
-
-        vehicles =
-            normalizeVehicles(
-                rawVehicles
-            );
-
-
-        renderVehicles();
+renderVehicles();
 
     }
 
