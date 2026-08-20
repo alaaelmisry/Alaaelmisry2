@@ -32,7 +32,45 @@ let pendingAdminAction = null;
    SHORT SELECTOR
 ========================================================= */
 
-const $ = id => document.getElementById(id);
+const $ = id =>
+    document.getElementById(id);
+
+
+/* =========================================================
+   SAFE EVENT BINDING
+========================================================= */
+
+function bindClick(id, handler) {
+
+    const element = $(id);
+
+    if (element) {
+        element.addEventListener("click", handler);
+    }
+
+}
+
+
+function bindEnter(id, handler) {
+
+    const element = $(id);
+
+    if (!element) {
+        return;
+    }
+
+    element.addEventListener(
+        "keydown",
+        event => {
+
+            if (event.key === "Enter") {
+                handler();
+            }
+
+        }
+    );
+
+}
 
 
 /* =========================================================
@@ -45,87 +83,98 @@ document.addEventListener(
 
         updateClock();
 
-        setInterval(updateClock, 1000);
+        setInterval(
+            updateClock,
+            1000
+        );
 
         loadVehicles();
 
 
-        $("editBtn").addEventListener(
-            "click",
+        bindClick(
+            "editBtn",
             requestEdit
         );
 
 
-        $("verifyBtn").addEventListener(
-            "click",
+        bindClick(
+            "verifyBtn",
             verifyEdit
         );
 
 
-        $("saveBtn").addEventListener(
-            "click",
+        bindClick(
+            "saveBtn",
             saveVehicle
         );
 
 
-        $("confirmYesBtn").addEventListener(
-            "click",
+        bindClick(
+            "confirmYesBtn",
             confirmUpdate
         );
 
 
-        $("confirmNoBtn").addEventListener(
-            "click",
+        bindClick(
+            "confirmNoBtn",
             closeConfirmModal
         );
 
 
-        $("verifyAdminPasswordBtn").addEventListener(
-            "click",
+        bindClick(
+            "verifyAdminPasswordBtn",
             verifyAdminPassword
         );
 
 
-        $("addVehicleBtn").addEventListener(
-            "click",
+        bindClick(
+            "addVehicleBtn",
             openAddVehicle
         );
 
 
-        $("deleteVehicleBtn").addEventListener(
-            "click",
+        bindClick(
+            "deleteVehicleBtn",
             requestDeleteVehicle
         );
 
 
-        $("saveNewVehicleBtn").addEventListener(
-            "click",
+        bindClick(
+            "saveNewVehicleBtn",
             saveNewVehicle
         );
 
 
-        $("supervisorPassword").addEventListener(
-            "keydown",
-            event => {
-
-                if (event.key === "Enter") {
-                    verifyEdit();
-                }
-
-            }
+        bindEnter(
+            "supervisorPassword",
+            verifyEdit
         );
 
 
-        $("adminPasswordInput").addEventListener(
-            "keydown",
-            event => {
-
-                if (event.key === "Enter") {
-                    verifyAdminPassword();
-                }
-
-            }
+        bindEnter(
+            "adminPasswordInput",
+            verifyAdminPassword
         );
+
+    }
+);
+
+
+/* =========================================================
+   PAGE VISIBILITY
+========================================================= */
+
+document.addEventListener(
+    "visibilitychange",
+    () => {
+
+        if (
+            !document.hidden
+        ) {
+
+            loadVehicles();
+
+        }
 
     }
 );
@@ -137,7 +186,17 @@ document.addEventListener(
 
 function updateClock() {
 
-    const now = new Date();
+    const dateTime =
+        $("dateTime");
+
+    if (!dateTime) {
+        return;
+    }
+
+
+    const now =
+        new Date();
+
 
     const days = [
         "الأحد",
@@ -149,8 +208,10 @@ function updateClock() {
         "السبت"
     ];
 
+
     const day =
         days[now.getDay()];
+
 
     const date =
         new Intl.DateTimeFormat(
@@ -161,6 +222,7 @@ function updateClock() {
                 day: "2-digit"
             }
         ).format(now);
+
 
     const time =
         now.toLocaleTimeString(
@@ -173,8 +235,10 @@ function updateClock() {
             }
         );
 
-    $("dateTime").textContent =
+
+    dateTime.textContent =
         `${day} - ${date} - ${time}`;
+
 }
 
 
@@ -202,7 +266,7 @@ async function loadVehicles() {
 
         const response =
             await fetch(
-                `${API_URL}?action=getVehicles`,
+                `${API_URL}?action=getVehicles&_=${Date.now()}`,
                 {
                     method: "GET",
                     cache: "no-store"
@@ -211,9 +275,11 @@ async function loadVehicles() {
 
 
         if (!response.ok) {
+
             throw new Error(
                 "تعذر الاتصال بالخادم"
             );
+
         }
 
 
@@ -221,14 +287,33 @@ async function loadVehicles() {
             await response.json();
 
 
-        vehicles =
+        if (
+            data &&
+            data.ok === false
+        ) {
+
+            throw new Error(
+                data.message ||
+                "تعذر تحميل البيانات"
+            );
+
+        }
+
+
+        const rawVehicles =
             Array.isArray(data)
                 ? data
-                : (data.vehicles || []);
+                : (
+                    Array.isArray(data.vehicles)
+                        ? data.vehicles
+                        : []
+                );
 
 
         vehicles =
-            normalizeVehicles(vehicles);
+            normalizeVehicles(
+                rawVehicles
+            );
 
 
         renderVehicles();
@@ -237,15 +322,27 @@ async function loadVehicles() {
 
     catch (error) {
 
-        console.error(error);
+        console.error(
+            "loadVehicles:",
+            error
+        );
 
-        $("vehicleGrid").innerHTML =
-            `
-            <div class="loading">
-                تعذر تحميل بيانات المركبات.
-                تحقق من الاتصال بالخادم.
-            </div>
-            `;
+
+        const grid =
+            $("vehicleGrid");
+
+
+        if (grid) {
+
+            grid.innerHTML =
+                `
+                <div class="loading">
+                    تعذر تحميل بيانات المركبات.
+                    تحقق من الاتصال بالخادم.
+                </div>
+                `;
+
+        }
 
     }
 
@@ -265,12 +362,15 @@ function normalizeVehicles(list) {
 
                 id:
                     v.id ??
-                    i + 1,
+                    v.row ??
+                    i + 2,
+
 
                 serial:
                     v.serial ??
                     v.SN ??
                     i + 1,
+
 
                 number:
                     v.number ??
@@ -278,16 +378,19 @@ function normalizeVehicles(list) {
                     v.VN ??
                     "",
 
+
                 type:
                     v.type ??
                     v.vehicleType ??
                     "",
+
 
                 driver:
                     v.driver ??
                     v.driverName ??
                     v.DN ??
                     "",
+
 
                 vehicleStatus:
                     normalizeVehicleStatus(
@@ -296,20 +399,25 @@ function normalizeVehicles(list) {
                         v.VC
                     ),
 
+
                 driverStatus:
                     normalizeDriverStatus(
                         v.driverStatus ??
                         v.DC
                     ),
 
+
                 maintenance:
-                    v.maintenance ??
-                    v.maintenanceStatus ??
-                    "none",
+                    normalizeMaintenance(
+                        v.maintenance ??
+                        v.maintenanceStatus
+                    ),
+
 
                 notes:
                     v.notes ??
                     "",
+
 
                 updatedAt:
                     v.updatedAt ??
@@ -317,11 +425,7 @@ function normalizeVehicles(list) {
                     v.time ??
                     "",
 
-                /*
-                   الرقم السري الخاص بالمفوض
-                   يمكن أن يأتي من Google Sheets
-                   باسم password أو vehiclePassword
-                */
+
                 password:
                     v.password ??
                     v.vehiclePassword ??
@@ -362,6 +466,7 @@ function normalizeVehicleStatus(value) {
 
 
     return "stopped";
+
 }
 
 
@@ -388,6 +493,44 @@ function normalizeDriverStatus(value) {
 
 
     return "absent";
+
+}
+
+
+function normalizeMaintenance(value) {
+
+    const s =
+        String(value ?? "")
+            .toLowerCase()
+            .trim();
+
+
+    if (
+        [
+            "routine",
+            "صيانة دورية"
+        ].includes(s)
+    ) {
+
+        return "routine";
+
+    }
+
+
+    if (
+        [
+            "emergency",
+            "صيانة طارئة"
+        ].includes(s)
+    ) {
+
+        return "emergency";
+
+    }
+
+
+    return "none";
+
 }
 
 
@@ -399,16 +542,24 @@ function createDemoVehicles() {
 
     const result = [];
 
-    for (let i = 1; i <= 68; i++) {
+
+    for (
+        let i = 1;
+        i <= 68;
+        i++
+    ) {
 
         result.push({
 
-            id: i,
+            id: i + 1,
 
             serial: i,
 
             number:
-                String(i).padStart(3, "0"),
+                String(i).padStart(
+                    3,
+                    "0"
+                ),
 
             type: "",
 
@@ -433,7 +584,9 @@ function createDemoVehicles() {
 
     }
 
+
     return result;
+
 }
 
 
@@ -445,6 +598,12 @@ function renderVehicles() {
 
     const grid =
         $("vehicleGrid");
+
+
+    if (!grid) {
+        return;
+    }
+
 
     grid.innerHTML = "";
 
@@ -463,10 +622,12 @@ function renderVehicles() {
 
 
     vehicles.forEach(
-        (vehicle, index) => {
+        vehicle => {
 
             const row =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
 
             row.className =
@@ -517,7 +678,9 @@ function renderVehicles() {
             row.innerHTML = `
 
                 <div>
-                    ${escapeHtml(vehicle.serial)}
+                    ${escapeHtml(
+                        vehicle.serial
+                    )}
                 </div>
 
 
@@ -575,10 +738,16 @@ function renderVehicles() {
 
                     ${
                         vehicle.notes
-                            ? `<span class="notes-icon"
-                                    title="${escapeHtml(vehicle.notes)}">
+                            ? `
+                                <span
+                                    class="notes-icon"
+                                    title="${escapeHtml(
+                                        vehicle.notes
+                                    )}"
+                                >
                                     ✉
-                               </span>`
+                                </span>
+                              `
                             : "—"
                     }
 
@@ -586,11 +755,9 @@ function renderVehicles() {
 
 
                 <div>
-
                     ${formatAge(
                         vehicle.updatedAt
                     )}
-
                 </div>
 
             `;
@@ -610,6 +777,12 @@ function renderVehicles() {
 
 function getRowClass(vehicle) {
 
+    /*
+       إذا لم يتم تحديث المركبة
+       أو مر أكثر من 24 ساعة:
+       رمادي.
+    */
+
     if (
         isStale(
             vehicle.updatedAt
@@ -617,6 +790,7 @@ function getRowClass(vehicle) {
     ) {
 
         return "vehicle-old";
+
     }
 
 
@@ -626,6 +800,7 @@ function getRowClass(vehicle) {
     ) {
 
         return "status-working";
+
     }
 
 
@@ -634,10 +809,12 @@ function getRowClass(vehicle) {
     ) {
 
         return "status-stopped";
+
     }
 
 
     return "maintenance-routine";
+
 }
 
 
@@ -656,20 +833,36 @@ function askUpdate(vehicle) {
         vehicle.serial;
 
 
-    $("confirmText").textContent =
-        `هل ترغب في تحديث حالة المركبة رقم (${number})؟`;
+    const confirmText =
+        $("confirmText");
 
 
-    $("confirmModal")
-        .classList
-        .remove("hidden");
+    if (confirmText) {
+
+        confirmText.textContent =
+            `هل ترغب في تحديث حالة المركبة رقم (${number})؟`;
+
+    }
 
 
-    $("confirmModal")
-        .setAttribute(
-            "aria-hidden",
-            "false"
-        );
+    const modal =
+        $("confirmModal");
+
+
+    if (!modal) {
+        return;
+    }
+
+
+    modal.classList.remove(
+        "hidden"
+    );
+
+
+    modal.setAttribute(
+        "aria-hidden",
+        "false"
+    );
 
 }
 
@@ -698,31 +891,55 @@ function openDetails() {
     }
 
 
-    $("modalTitle").textContent =
-        `بيانات المركبة ${
-            selectedVehicle.number ||
-            selectedVehicle.serial
-        }`;
+    const title =
+        $("modalTitle");
+
+
+    if (title) {
+
+        title.textContent =
+            `بيانات المركبة ${
+                selectedVehicle.number ||
+                selectedVehicle.serial
+            }`;
+
+    }
 
 
     renderPreview();
 
 
-    $("editArea")
-        .classList
-        .add("hidden");
+    const editArea =
+        $("editArea");
 
 
-    $("detailsModal")
-        .classList
-        .remove("hidden");
+    if (editArea) {
 
-
-    $("detailsModal")
-        .setAttribute(
-            "aria-hidden",
-            "false"
+        editArea.classList.add(
+            "hidden"
         );
+
+    }
+
+
+    const modal =
+        $("detailsModal");
+
+
+    if (!modal) {
+        return;
+    }
+
+
+    modal.classList.remove(
+        "hidden"
+    );
+
+
+    modal.setAttribute(
+        "aria-hidden",
+        "false"
+    );
 
 }
 
@@ -733,11 +950,25 @@ function openDetails() {
 
 function renderPreview() {
 
+    if (!selectedVehicle) {
+        return;
+    }
+
+
+    const box =
+        $("vehiclePreview");
+
+
+    if (!box) {
+        return;
+    }
+
+
     const v =
         selectedVehicle;
 
 
-    $("vehiclePreview").innerHTML = `
+    box.innerHTML = `
 
         <div class="preview-row">
             <span class="preview-label">
@@ -812,7 +1043,9 @@ function renderPreview() {
                 حالة الصيانة
             </span>
             <span>
-                ${maintenanceText(v.maintenance)}
+                ${maintenanceText(
+                    v.maintenance
+                )}
             </span>
         </div>
 
@@ -822,7 +1055,9 @@ function renderPreview() {
                 الملاحظات
             </span>
             <span>
-                ${escapeHtml(v.notes || "لايوجد")}
+                ${escapeHtml(
+                    v.notes || "لايوجد"
+                )}
             </span>
         </div>
 
@@ -854,36 +1089,72 @@ function requestEdit() {
     }
 
 
-    $("vehiclePassword").value =
-        selectedVehicle.number ||
-        selectedVehicle.serial;
+    const vehiclePassword =
+        $("vehiclePassword");
 
 
-    $("supervisorPassword").value =
-        "";
+    if (vehiclePassword) {
+
+        vehiclePassword.value =
+            selectedVehicle.number ||
+            selectedVehicle.serial;
+
+    }
 
 
-    $("passwordMessage").textContent =
-        "";
+    const supervisorPassword =
+        $("supervisorPassword");
 
 
-    $("passwordModal")
-        .classList
-        .remove("hidden");
+    if (supervisorPassword) {
+
+        supervisorPassword.value =
+            "";
+
+    }
 
 
-    $("passwordModal")
-        .setAttribute(
-            "aria-hidden",
-            "false"
-        );
+    const message =
+        $("passwordMessage");
+
+
+    if (message) {
+
+        message.textContent =
+            "";
+
+    }
+
+
+    const modal =
+        $("passwordModal");
+
+
+    if (!modal) {
+        return;
+    }
+
+
+    modal.classList.remove(
+        "hidden"
+    );
+
+
+    modal.setAttribute(
+        "aria-hidden",
+        "false"
+    );
 
 
     setTimeout(
         () => {
 
-            $("supervisorPassword")
-                .focus();
+            if ($("supervisorPassword")) {
+
+                $("supervisorPassword")
+                    .focus();
+
+            }
 
         },
         100
@@ -903,23 +1174,38 @@ function verifyEdit() {
     }
 
 
+    const input =
+        $("supervisorPassword");
+
+
+    if (!input) {
+        return;
+    }
+
+
     const password =
-        $("supervisorPassword")
-            .value
-            .trim();
+        input.value.trim();
+
+
+    const message =
+        $("passwordMessage");
 
 
     if (!password) {
 
-        $("passwordMessage").textContent =
-            "أدخل الرقم السري.";
+        if (message) {
+
+            message.textContent =
+                "أدخل الرقم السري.";
+
+        }
 
         return;
     }
 
 
     /*
-       المشرف يستطيع تعديل جميع البيانات
+       المشرف
     */
 
     if (
@@ -929,14 +1215,16 @@ function verifyEdit() {
 
         closePasswordModal();
 
-        populateEditForm(true);
+        populateEditForm(
+            true
+        );
 
         return;
     }
 
 
     /*
-       الرقم السري الخاص بالمركبة
+       المفوض
     */
 
     if (
@@ -949,14 +1237,20 @@ function verifyEdit() {
 
         closePasswordModal();
 
-        populateEditForm(false);
+        populateEditForm(
+            false
+        );
 
         return;
     }
 
 
-    $("passwordMessage").textContent =
-        "الرقم السري غير صحيح.";
+    if (message) {
+
+        message.textContent =
+            "الرقم السري غير صحيح.";
+
+    }
 
 }
 
@@ -965,60 +1259,100 @@ function verifyEdit() {
    POPULATE EDIT FORM
 ========================================================= */
 
-function populateEditForm(isSupervisor) {
+function populateEditForm(
+    isSupervisor
+) {
 
     const v =
         selectedVehicle;
 
 
-    $("editNumber").value =
-        v.number || "";
+    if (!v) {
+        return;
+    }
 
 
-    $("editDriver").value =
-        v.driver || "";
+    if ($("editNumber")) {
+
+        $("editNumber").value =
+            v.number || "";
+
+    }
 
 
-    $("editVehicleStatus").value =
-        v.vehicleStatus;
+    if ($("editDriver")) {
+
+        $("editDriver").value =
+            v.driver || "";
+
+    }
 
 
-    $("editDriverStatus").value =
-        v.driverStatus;
+    if ($("editVehicleStatus")) {
+
+        $("editVehicleStatus").value =
+            v.vehicleStatus;
+
+    }
 
 
-    $("editMaintenance").value =
-        v.maintenance || "none";
+    if ($("editDriverStatus")) {
+
+        $("editDriverStatus").value =
+            v.driverStatus;
+
+    }
 
 
-    $("editNotes").value =
-        v.notes || "";
+    if ($("editMaintenance")) {
+
+        $("editMaintenance").value =
+            v.maintenance || "none";
+
+    }
 
 
-    /*
-       المفوض:
-       لا يستطيع تعديل الرقم أو المفوض.
-       المشرف:
-       يستطيع تعديلهما.
-    */
+    if ($("editNotes")) {
 
-    $("editNumber").readOnly =
-        !isSupervisor;
+        $("editNotes").value =
+            v.notes || "";
+
+    }
 
 
-    $("editDriver").readOnly =
-        !isSupervisor;
+    if ($("editNumber")) {
+
+        $("editNumber").readOnly =
+            !isSupervisor;
+
+    }
 
 
-    $("saveMessage").textContent =
-        isSupervisor
-            ? "صلاحية المشرف مفعلة."
-            : "صلاحية المفوض مفعلة.";
+    if ($("editDriver")) {
+
+        $("editDriver").readOnly =
+            !isSupervisor;
+
+    }
 
 
-    $("editArea")
-        .classList
-        .remove("hidden");
+    if ($("saveMessage")) {
+
+        $("saveMessage").textContent =
+            isSupervisor
+                ? "صلاحية المشرف مفعلة."
+                : "صلاحية المفوض مفعلة.";
+
+    }
+
+
+    if ($("editArea")) {
+
+        $("editArea")
+            .classList
+            .remove("hidden");
+
+    }
 
 }
 
@@ -1034,10 +1368,62 @@ async function saveVehicle() {
     }
 
 
+    const number =
+        $("editNumber")
+            ?.value
+            .trim() || "";
+
+
+    const driver =
+        $("editDriver")
+            ?.value
+            .trim() || "";
+
+
+    const vehicleStatus =
+        $("editVehicleStatus")
+            ?.value || "working";
+
+
+    const driverStatus =
+        $("editDriverStatus")
+            ?.value || "absent";
+
+
+    const maintenance =
+        $("editMaintenance")
+            ?.value || "none";
+
+
+    const notes =
+        $("editNotes")
+            ?.value
+            .trim() || "";
+
+
+    if (!number) {
+
+        if ($("saveMessage")) {
+
+            $("saveMessage").textContent =
+                "رقم المركبة مطلوب.";
+
+        }
+
+        return;
+    }
+
+
     const payload = {
 
         action:
             "updateVehicle",
+
+        /*
+           مهم:
+           يتم إرسال ID والـ Serial معًا.
+           Code.gs سيبحث بالـ ID أولًا.
+        */
 
         id:
             selectedVehicle.id,
@@ -1046,31 +1432,26 @@ async function saveVehicle() {
             selectedVehicle.serial,
 
         number:
-            $("editNumber")
-                .value
-                .trim(),
+            number,
 
         driver:
-            $("editDriver")
-                .value
-                .trim(),
+            driver,
 
         vehicleStatus:
-            $("editVehicleStatus")
-                .value,
+            vehicleStatus,
 
         driverStatus:
-            $("editDriverStatus")
-                .value,
+            driverStatus,
 
         maintenance:
-            $("editMaintenance")
-                .value,
+            maintenance,
 
         notes:
-            $("editNotes")
-                .value
-                .trim(),
+            notes,
+
+        /*
+           الوقت الفعلي يسجل من الخادم.
+        */
 
         updatedAt:
             new Date().toISOString()
@@ -1078,34 +1459,86 @@ async function saveVehicle() {
     };
 
 
-    $("saveMessage").textContent =
-        "جاري حفظ التعديل...";
+    if ($("saveMessage")) {
+
+        $("saveMessage").textContent =
+            "جاري حفظ التعديل...";
+
+    }
 
 
     try {
 
         const result =
-            await apiPost(payload);
+            await apiPost(
+                payload
+            );
 
 
-        if (!result.ok) {
+        if (
+            !result ||
+            !result.ok
+        ) {
 
             throw new Error(
-                result.message ||
+                result?.message ||
                 "فشل الحفظ"
             );
 
         }
 
 
+        /*
+           تحديث الكائن المحلي
+        */
+
         Object.assign(
             selectedVehicle,
-            payload
+            {
+                number:
+                    result.vehicle?.number ??
+                    number,
+
+                driver:
+                    result.vehicle?.driver ??
+                    driver,
+
+                vehicleStatus:
+                    normalizeVehicleStatus(
+                        result.vehicle?.vehicleStatus ??
+                        vehicleStatus
+                    ),
+
+                driverStatus:
+                    normalizeDriverStatus(
+                        result.vehicle?.driverStatus ??
+                        driverStatus
+                    ),
+
+                maintenance:
+                    normalizeMaintenance(
+                        result.vehicle?.maintenance ??
+                        maintenance
+                    ),
+
+                notes:
+                    result.vehicle?.notes ??
+                    notes,
+
+                updatedAt:
+                    result.vehicle?.updatedAt ??
+                    new Date().toISOString()
+
+            }
         );
 
 
-        $("saveMessage").textContent =
-            "تم حفظ التعديل بنجاح.";
+        if ($("saveMessage")) {
+
+            $("saveMessage").textContent =
+                "تم حفظ التعديل بنجاح.";
+
+        }
 
 
         renderPreview();
@@ -1113,14 +1546,32 @@ async function saveVehicle() {
         renderVehicles();
 
 
+        /*
+           إعادة تحميل من Google Sheets
+           للتأكد من تطابق البيانات.
+        */
+
+        setTimeout(
+            loadVehicles,
+            500
+        );
+
     }
 
     catch (error) {
 
-        console.error(error);
+        console.error(
+            "saveVehicle:",
+            error
+        );
 
-        $("saveMessage").textContent =
-            "تعذر حفظ التعديل. تحقق من الاتصال.";
+
+        if ($("saveMessage")) {
+
+            $("saveMessage").textContent =
+                "تعذر حفظ التعديل. تحقق من الاتصال.";
+
+        }
 
     }
 
@@ -1131,37 +1582,59 @@ async function saveVehicle() {
    ADMIN PASSWORD
 ========================================================= */
 
-function requestAdminAction(action) {
+function requestAdminAction(
+    action
+) {
 
     pendingAdminAction =
         action;
 
 
-    $("adminPasswordInput").value =
-        "";
+    if ($("adminPasswordInput")) {
+
+        $("adminPasswordInput")
+            .value = "";
+
+    }
 
 
-    $("adminPasswordMessage").textContent =
-        "";
+    if ($("adminPasswordMessage")) {
+
+        $("adminPasswordMessage")
+            .textContent = "";
+
+    }
 
 
-    $("adminPasswordModal")
-        .classList
-        .remove("hidden");
+    const modal =
+        $("adminPasswordModal");
 
 
-    $("adminPasswordModal")
-        .setAttribute(
-            "aria-hidden",
-            "false"
-        );
+    if (!modal) {
+        return;
+    }
+
+
+    modal.classList.remove(
+        "hidden"
+    );
+
+
+    modal.setAttribute(
+        "aria-hidden",
+        "false"
+    );
 
 
     setTimeout(
         () => {
 
-            $("adminPasswordInput")
-                .focus();
+            if ($("adminPasswordInput")) {
+
+                $("adminPasswordInput")
+                    .focus();
+
+            }
 
         },
         100
@@ -1176,10 +1649,17 @@ function requestAdminAction(action) {
 
 function verifyAdminPassword() {
 
+    const input =
+        $("adminPasswordInput");
+
+
+    if (!input) {
+        return;
+    }
+
+
     const password =
-        $("adminPasswordInput")
-            .value
-            .trim();
+        input.value.trim();
 
 
     if (
@@ -1187,8 +1667,13 @@ function verifyAdminPassword() {
         SUPERVISOR_PASSWORD
     ) {
 
-        $("adminPasswordMessage").textContent =
-            "الرقم السري للمشرف غير صحيح.";
+        if ($("adminPasswordMessage")) {
+
+            $("adminPasswordMessage")
+                .textContent =
+                    "الرقم السري للمشرف غير صحيح.";
+
+        }
 
         return;
     }
@@ -1205,14 +1690,20 @@ function verifyAdminPassword() {
     closeAdminPasswordModal();
 
 
-    if (action === "add") {
+    if (
+        action ===
+        "add"
+    ) {
 
         openAddVehicle();
 
     }
 
 
-    if (action === "delete") {
+    if (
+        action ===
+        "delete"
+    ) {
 
         deleteVehicle();
 
@@ -1227,35 +1718,59 @@ function verifyAdminPassword() {
 
 function openAddVehicle() {
 
-    $("newVehicleNumber").value =
-        "";
+    if ($("newVehicleNumber")) {
+
+        $("newVehicleNumber")
+            .value = "";
+
+    }
 
 
-    $("newVehicleDriver").value =
-        "";
+    if ($("newVehicleDriver")) {
+
+        $("newVehicleDriver")
+            .value = "";
+
+    }
 
 
-    $("addVehicleMessage").textContent =
-        "";
+    if ($("addVehicleMessage")) {
+
+        $("addVehicleMessage")
+            .textContent = "";
+
+    }
 
 
-    $("addVehicleModal")
-        .classList
-        .remove("hidden");
+    const modal =
+        $("addVehicleModal");
 
 
-    $("addVehicleModal")
-        .setAttribute(
-            "aria-hidden",
-            "false"
-        );
+    if (!modal) {
+        return;
+    }
+
+
+    modal.classList.remove(
+        "hidden"
+    );
+
+
+    modal.setAttribute(
+        "aria-hidden",
+        "false"
+    );
 
 
     setTimeout(
         () => {
 
-            $("newVehicleNumber")
-                .focus();
+            if ($("newVehicleNumber")) {
+
+                $("newVehicleNumber")
+                    .focus();
+
+            }
 
         },
         100
@@ -1272,20 +1787,25 @@ async function saveNewVehicle() {
 
     const number =
         $("newVehicleNumber")
-            .value
-            .trim();
+            ?.value
+            .trim() || "";
 
 
     const driver =
         $("newVehicleDriver")
-            .value
-            .trim();
+            ?.value
+            .trim() || "";
 
 
     if (!number) {
 
-        $("addVehicleMessage").textContent =
-            "أدخل رقم المركبة.";
+        if ($("addVehicleMessage")) {
+
+            $("addVehicleMessage")
+                .textContent =
+                    "أدخل رقم المركبة.";
+
+        }
 
         return;
     }
@@ -1294,20 +1814,36 @@ async function saveNewVehicle() {
     if (
         vehicles.some(
             v =>
-                String(v.number).trim() ===
+                String(
+                    v.number
+                )
+                .trim()
+                .toLowerCase() ===
                 number
+                    .trim()
+                    .toLowerCase()
         )
     ) {
 
-        $("addVehicleMessage").textContent =
-            "رقم المركبة موجود بالفعل.";
+        if ($("addVehicleMessage")) {
+
+            $("addVehicleMessage")
+                .textContent =
+                    "رقم المركبة موجود بالفعل.";
+
+        }
 
         return;
     }
 
 
-    $("addVehicleMessage").textContent =
-        "جاري إضافة المركبة...";
+    if ($("addVehicleMessage")) {
+
+        $("addVehicleMessage")
+            .textContent =
+                "جاري إضافة المركبة...";
+
+    }
 
 
     const payload = {
@@ -1342,57 +1878,40 @@ async function saveNewVehicle() {
     try {
 
         const result =
-            await apiPost(payload);
+            await apiPost(
+                payload
+            );
 
 
-        if (!result.ok) {
+        if (
+            !result ||
+            !result.ok
+        ) {
 
             throw new Error(
-                result.message ||
+                result?.message ||
                 "فشل إضافة المركبة"
             );
 
         }
 
 
-        const newVehicle =
-            normalizeVehicles(
-                [
-                    result.vehicle ||
-                    payload
-                ]
-            )[0];
+        /*
+           إعادة القراءة من Google Sheets
+           هي الطريقة الأدق لضمان تطابق
+           Serial / ID / Update Time.
+        */
+
+        await loadVehicles();
 
 
-        newVehicle.id =
-            result.id ??
-            newVehicle.id ??
-            Date.now();
+        if ($("addVehicleMessage")) {
 
+            $("addVehicleMessage")
+                .textContent =
+                    "تمت إضافة المركبة بنجاح.";
 
-        newVehicle.serial =
-            result.serial ??
-            (
-                Math.max(
-                    0,
-                    ...vehicles.map(
-                        v =>
-                            Number(v.serial) || 0
-                    )
-                ) + 1
-            );
-
-
-        vehicles.push(
-            newVehicle
-        );
-
-
-        renderVehicles();
-
-
-        $("addVehicleMessage").textContent =
-            "تمت إضافة المركبة بنجاح.";
+        }
 
 
         setTimeout(
@@ -1404,10 +1923,20 @@ async function saveNewVehicle() {
 
     catch (error) {
 
-        console.error(error);
+        console.error(
+            "saveNewVehicle:",
+            error
+        );
 
-        $("addVehicleMessage").textContent =
-            "تعذر إضافة المركبة.";
+
+        if ($("addVehicleMessage")) {
+
+            $("addVehicleMessage")
+                .textContent =
+                    error.message ||
+                    "تعذر إضافة المركبة.";
+
+        }
 
     }
 
@@ -1448,9 +1977,13 @@ async function deleteVehicle() {
     }
 
 
+    const vehicle =
+        selectedVehicle;
+
+
     const number =
-        selectedVehicle.number ||
-        selectedVehicle.serial;
+        vehicle.number ||
+        vehicle.serial;
 
 
     const confirmed =
@@ -1473,21 +2006,24 @@ async function deleteVehicle() {
                     "deleteVehicle",
 
                 id:
-                    selectedVehicle.id,
+                    vehicle.id,
 
                 serial:
-                    selectedVehicle.serial,
+                    vehicle.serial,
 
                 number:
-                    selectedVehicle.number
+                    vehicle.number
 
             });
 
 
-        if (!result.ok) {
+        if (
+            !result ||
+            !result.ok
+        ) {
 
             throw new Error(
-                result.message ||
+                result?.message ||
                 "فشل حذف المركبة"
             );
 
@@ -1498,9 +2034,7 @@ async function deleteVehicle() {
             vehicles.filter(
                 v =>
                     String(v.id) !==
-                    String(
-                        selectedVehicle.id
-                    )
+                    String(vehicle.id)
             );
 
 
@@ -1510,16 +2044,21 @@ async function deleteVehicle() {
 
         renderVehicles();
 
-
         closeModal();
+
 
     }
 
     catch (error) {
 
-        console.error(error);
+        console.error(
+            "deleteVehicle:",
+            error
+        );
+
 
         alert(
+            error.message ||
             "تعذر حذف المركبة. تحقق من الاتصال."
         );
 
@@ -1532,13 +2071,16 @@ async function deleteVehicle() {
    GENERIC API POST
 ========================================================= */
 
-async function apiPost(payload) {
+async function apiPost(
+    payload
+) {
 
     const response =
         await fetch(
             API_URL,
             {
-                method: "POST",
+                method:
+                    "POST",
 
                 headers: {
                     "Content-Type":
@@ -1546,7 +2088,9 @@ async function apiPost(payload) {
                 },
 
                 body:
-                    JSON.stringify(payload)
+                    JSON.stringify(
+                        payload
+                    )
             }
         );
 
@@ -1561,7 +2105,34 @@ async function apiPost(payload) {
     }
 
 
-    return await response.json();
+    const text =
+        await response.text();
+
+
+    if (!text) {
+
+        throw new Error(
+            "الخادم لم يرجع بيانات."
+        );
+
+    }
+
+
+    try {
+
+        return JSON.parse(
+            text
+        );
+
+    }
+
+    catch {
+
+        throw new Error(
+            "استجابة الخادم غير صحيحة."
+        );
+
+    }
 
 }
 
@@ -1572,16 +2143,24 @@ async function apiPost(payload) {
 
 function closeModal() {
 
-    $("detailsModal")
-        .classList
-        .add("hidden");
+    const modal =
+        $("detailsModal");
 
 
-    $("detailsModal")
-        .setAttribute(
-            "aria-hidden",
-            "true"
-        );
+    if (!modal) {
+        return;
+    }
+
+
+    modal.classList.add(
+        "hidden"
+    );
+
+
+    modal.setAttribute(
+        "aria-hidden",
+        "true"
+    );
 
 }
 
@@ -1592,16 +2171,24 @@ function closeModal() {
 
 function closePasswordModal() {
 
-    $("passwordModal")
-        .classList
-        .add("hidden");
+    const modal =
+        $("passwordModal");
 
 
-    $("passwordModal")
-        .setAttribute(
-            "aria-hidden",
-            "true"
-        );
+    if (!modal) {
+        return;
+    }
+
+
+    modal.classList.add(
+        "hidden"
+    );
+
+
+    modal.setAttribute(
+        "aria-hidden",
+        "true"
+    );
 
 }
 
@@ -1612,16 +2199,24 @@ function closePasswordModal() {
 
 function closeConfirmModal() {
 
-    $("confirmModal")
-        .classList
-        .add("hidden");
+    const modal =
+        $("confirmModal");
 
 
-    $("confirmModal")
-        .setAttribute(
-            "aria-hidden",
-            "true"
-        );
+    if (!modal) {
+        return;
+    }
+
+
+    modal.classList.add(
+        "hidden"
+    );
+
+
+    modal.setAttribute(
+        "aria-hidden",
+        "true"
+    );
 
 }
 
@@ -1632,16 +2227,24 @@ function closeConfirmModal() {
 
 function closeAdminPasswordModal() {
 
-    $("adminPasswordModal")
-        .classList
-        .add("hidden");
+    const modal =
+        $("adminPasswordModal");
 
 
-    $("adminPasswordModal")
-        .setAttribute(
-            "aria-hidden",
-            "true"
-        );
+    if (!modal) {
+        return;
+    }
+
+
+    modal.classList.add(
+        "hidden"
+    );
+
+
+    modal.setAttribute(
+        "aria-hidden",
+        "true"
+    );
 
 }
 
@@ -1652,60 +2255,83 @@ function closeAdminPasswordModal() {
 
 function closeAddVehicleModal() {
 
-    $("addVehicleModal")
-        .classList
-        .add("hidden");
+    const modal =
+        $("addVehicleModal");
 
 
-    $("addVehicleModal")
-        .setAttribute(
-            "aria-hidden",
-            "true"
-        );
+    if (!modal) {
+        return;
+    }
+
+
+    modal.classList.add(
+        "hidden"
+    );
+
+
+    modal.setAttribute(
+        "aria-hidden",
+        "true"
+    );
 
 }
 
 
 /* =========================================================
-   ADMIN BUTTONS
-   يمكن استدعاؤها من واجهة المشرف
+   ADMIN PANEL
 ========================================================= */
 
 function openAdminPanel() {
 
-    $("adminModal")
-        .classList
-        .remove("hidden");
+    const modal =
+        $("adminModal");
 
 
-    $("adminModal")
-        .setAttribute(
-            "aria-hidden",
-            "false"
-        );
+    if (!modal) {
+        return;
+    }
+
+
+    modal.classList.remove(
+        "hidden"
+    );
+
+
+    modal.setAttribute(
+        "aria-hidden",
+        "false"
+    );
 
 }
 
 
 function closeAdminModal() {
 
-    $("adminModal")
-        .classList
-        .add("hidden");
+    const modal =
+        $("adminModal");
 
 
-    $("adminModal")
-        .setAttribute(
-            "aria-hidden",
-            "true"
-        );
+    if (!modal) {
+        return;
+    }
+
+
+    modal.classList.add(
+        "hidden"
+    );
+
+
+    modal.setAttribute(
+        "aria-hidden",
+        "true"
+    );
 
 }
 
 
-/*
-   إضافة مركبة للمشرف
-*/
+/* =========================================================
+   ADMIN BUTTONS
+========================================================= */
 
 function adminAddVehicle() {
 
@@ -1715,10 +2341,6 @@ function adminAddVehicle() {
 
 }
 
-
-/*
-   حذف مركبة للمشرف
-*/
 
 function adminDeleteVehicle() {
 
@@ -1733,7 +2355,9 @@ function adminDeleteVehicle() {
    MAINTENANCE
 ========================================================= */
 
-function maintenanceText(value) {
+function maintenanceText(
+    value
+) {
 
     return {
 
@@ -1759,7 +2383,9 @@ function maintenanceText(value) {
    DATE PARSER
 ========================================================= */
 
-function parseDate(value) {
+function parseDate(
+    value
+) {
 
     if (
         value instanceof Date
@@ -1803,21 +2429,22 @@ function parseDate(value) {
 
     if (m) {
 
-        return new Date(
+        const candidate =
+            new Date(
+                Number(m[3]),
+                Number(m[2]) - 1,
+                Number(m[1]),
+                Number(m[4] || 0),
+                Number(m[5] || 0),
+                Number(m[6] || 0)
+            );
 
-            Number(m[3]),
 
-            Number(m[2]) - 1,
-
-            Number(m[1]),
-
-            Number(m[4] || 0),
-
-            Number(m[5] || 0),
-
-            Number(m[6] || 0)
-
-        );
+        return Number.isNaN(
+            candidate.getTime()
+        )
+            ? null
+            : candidate;
 
     }
 
@@ -1831,7 +2458,9 @@ function parseDate(value) {
    24 HOURS
 ========================================================= */
 
-function isStale(value) {
+function isStale(
+    value
+) {
 
     const date =
         parseDate(value);
@@ -1842,11 +2471,16 @@ function isStale(value) {
     }
 
 
-    return (
+    const age =
         Date.now() -
-        date.getTime()
-    ) >
-    24 * 60 * 60 * 1000;
+        date.getTime();
+
+
+    return age >
+        24 *
+        60 *
+        60 *
+        1000;
 
 }
 
@@ -1855,7 +2489,9 @@ function isStale(value) {
    FORMAT AGE
 ========================================================= */
 
-function formatAge(value) {
+function formatAge(
+    value
+) {
 
     const d =
         parseDate(value);
@@ -1925,32 +2561,29 @@ function formatAge(value) {
    ESCAPE HTML
 ========================================================= */
 
-function escapeHtml(value) {
+function escapeHtml(
+    value
+) {
 
     return String(
         value ?? ""
     )
-
         .replaceAll(
             "&",
             "&amp;"
         )
-
         .replaceAll(
             "<",
             "&lt;"
         )
-
         .replaceAll(
             ">",
             "&gt;"
         )
-
         .replaceAll(
             '"',
             "&quot;"
         )
-
         .replaceAll(
             "'",
             "&#039;"
@@ -1966,12 +2599,13 @@ function escapeHtml(value) {
 setInterval(
     () => {
 
-        /*
-           إعادة قراءة البيانات كل 30 ثانية
-           مع الحفاظ على النافذة المفتوحة.
-        */
+        if (
+            !document.hidden
+        ) {
 
-        loadVehicles();
+            loadVehicles();
+
+        }
 
     },
     30000
