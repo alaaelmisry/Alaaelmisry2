@@ -1732,3 +1732,149 @@ textarea:focus-visible {
     }
 
 }
+
+/* =========================================================
+   ATP FINAL STATUS OVERRIDE
+   أولوية اللون الرمادي عند تجاوز 24 ساعة
+========================================================= */
+
+.vehicle-row.vehicle-old,
+.vehicle-row.vehicle-old:hover {
+
+    background:
+        #dfe3e7 !important;
+
+    color:
+        #4d555d !important;
+}
+
+
+.vehicle-row.vehicle-old > div {
+
+    background:
+        #dfe3e7 !important;
+
+    color:
+        #4d555d !important;
+
+    border-color:
+        #c3c9ce !important;
+}
+
+
+.vehicle-row.vehicle-old strong {
+
+    color:
+        #3f464d !important;
+}
+
+
+.vehicle-row.vehicle-old .notes-icon {
+
+    background:
+        #cbd1d6 !important;
+
+    color:
+        #4d555d !important;
+
+}
+
+
+/* =========================================================
+   PREVENT HORIZONTAL SCROLL
+========================================================= */
+
+html,
+body {
+
+    max-width:
+        100%;
+
+    overflow-x:
+        hidden;
+
+}
+
+
+.page-content,
+.fleet-table,
+.vehicle-grid {
+
+    max-width:
+        100%;
+
+}
+
+
+/* =========================================================
+   MOBILE TABLE COMPRESSION
+========================================================= */
+
+@media (max-width: 650px) {
+
+    .fleet-table {
+
+        width:
+            100%;
+
+        border-radius:
+            7px;
+
+    }
+
+
+    .fleet-head > div,
+    .vehicle-row > div {
+
+        overflow:
+            hidden;
+
+        text-overflow:
+            ellipsis;
+
+        white-space:
+            nowrap;
+
+    }
+
+
+    .vehicle-row > div:nth-child(2),
+    .vehicle-row > div:nth-child(4) {
+
+        white-space:
+            normal;
+
+        overflow-wrap:
+            anywhere;
+
+    }
+
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
+
+@media (max-width: 420px) {
+
+    .fleet-head > div,
+    .vehicle-row > div {
+
+        font-size:
+            9px;
+
+        padding:
+            3px 1px;
+
+    }
+
+
+    .vehicle-row {
+
+        min-height:
+            52px;
+
+    }
+
+}
