@@ -33,7 +33,7 @@ const SUPERVISOR_PASSWORD = "12345";
    عدد المركبات والمعدات
 */
 
-const MAX_VEHICLES = 100;
+const MAX_VEHICLES = 68;
 
 
 
